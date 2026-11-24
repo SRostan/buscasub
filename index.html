@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Consulta de Socio - Sociedad Uruguaya de Biociencias</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Header Institucional -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-wrapper">
+        <div class="sub-logo-badge">SUB</div>
+        <div class="brand-text">
+          <h1>SOCIEDAD URUGUAYA DE BIOCIENCIAS</h1>
+          <p>Portal Oficial de Consulta Institucional y Padrón Societario</p>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link active">🔍 Consulta Individual</a>
+        <a href="seccionales.html" class="nav-link">🔬 Directorio Seccionales</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+
+    <!-- Tarjeta del Buscador -->
+    <section class="card search-box-card">
+      <h2 style="color: var(--primary-navy); margin-bottom: 0.5rem; font-size: 1.4rem;">Consulta Individual de Estado de Socio</h2>
+      <p class="search-description">
+        Ingrese su número de Cédula de Identidad para verificar su condición estatutaria, registro de anualidades y seccionales asociadas.
+      </p>
+
+      <form id="searchForm" onsubmit="buscarSocio(event)">
+        <div class="search-input-group">
+          <input 
+            type="text" 
+            id="ciInput" 
+            class="ci-input" 
+            placeholder="Ej: 12345678" 
+            maxlength="11" 
+            autocomplete="off"
+            autofocus
+            required
+          >
+          <button type="submit" class="btn-search">
+            <span>Consultar</span> ➜
+          </button>
+        </div>
+        <div class="search-hints">
+          <span>💡 8 dígitos (sin puntos ni guiones)</span>
+          <span>•</span>
+          <span>🔒 Consulta segura</span>
+        </div>
+      </form>
+
+      <!-- Aviso de Privacidad Estricta -->
+      <div class="privacy-notice">
+        <span style="font-size: 1.25rem;">🛡️</span>
+        <div>
+          <strong>Compromiso de Privacidad Estricta:</strong> Esta consulta pública no muestra nombres ni datos de contacto para proteger la privacidad individual de los investigadores.
+        </div>
+      </div>
+    </section>
+
+    <!-- Tarjeta de No Encontrado -->
+    <div id="notFoundCard" class="not-found-card">
+      <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">❌</div>
+      <h3 style="color: #92400E; margin-bottom: 0.5rem;">Cédula no registrada en el padrón</h3>
+      <p style="color: #78350F; font-size: 0.95rem; margin-bottom: 1rem;">
+        El documento ingresado (<span id="ciNotFoundTxt" style="font-weight: 700;"></span>) no se encuentra registrado en el padrón activo de la Sociedad Uruguaya de Biociencias.
+      </p>
+      <p style="font-size: 0.85rem; color: #64748B;">
+        Si consideras que se trata de un error o deseas afiliarte a la SUB, por favor contacta a la secretaría institucional.
+      </p>
+    </div>
+
+    <!-- Resultados de la Consulta -->
+    <div id="resultContainer" class="result-container">
+
+      <!-- Hero Card: Estado de Actividad -->
+      <div class="card status-hero">
+        <div>
+          <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+            Documento Consultado
+          </span>
+          <h2 id="resCiDisplay" style="color: var(--primary-navy); font-size: 1.6rem; margin-top: 2px;"></h2>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+            Socio Registrado en la Sociedad Uruguaya de Biociencias
+          </div>
+        </div>
+
+        <div>
+          <div id="resBadgeEstado" class="status-badge-lg">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Grid con Información Académica y de Afiliación -->
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">Nivel Académico</div>
+          <div id="resNivel" class="info-value">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Afiliación Institucional</div>
+          <div id="resAfiliacion" class="info-value">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">Año de Ingreso a SUB</div>
+          <div id="resIngreso" class="info-value">—</div>
+        </div>
+      </div>
+
+      <!-- Card: Seccionales a las que adscribe -->
+      <div class="card">
+        <h3 class="card-title">🔬 Seccionales Científicas Adscritas</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
+          Las seccionales reflejan las áreas disciplinarias en las que el socio participa activamente:
+        </p>
+        <div class="seccionales-list">
+          <div class="sec-pill">
+            <span id="resSec1Text">—</span>
+            <span class="sec-role-tag">Preferencia Principal</span>
+          </div>
+          <div class="sec-pill">
+            <span id="resSec2Text">—</span>
+            <span class="sec-role-tag">Preferencia Secundaria</span>
+          </div>
+          <div class="sec-pill">
+            <span id="resSec3Text">—</span>
+            <span class="sec-role-tag">Preferencia Terciaria</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Historial de Cuotas 2021 a 2026 -->
+      <div class="card">
+        <h3 class="card-title">📅 Historial de Anualidades (2021 - 2026)</h3>
+        <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">
+          Registro histórico de cuotas y aportes anuales registrados en la tesorería de la SUB:
+        </p>
+        
+        <div class="cuotas-container">
+          <div class="cuota-card">
+            <div class="cuota-year">2021</div>
+            <div id="badge2021" class="cuota-badge">—</div>
+          </div>
+          <div class="cuota-card">
+            <div class="cuota-year">2022</div>
+            <div id="badge2022" class="cuota-badge">—</div>
+          </div>
+          <div class="cuota-card">
+            <div class="cuota-year">2023</div>
+            <div id="badge2023" class="cuota-badge">—</div>
+          </div>
+          <div class="cuota-card">
+            <div class="cuota-year">2024</div>
+            <div id="badge2024" class="cuota-badge">—</div>
+          </div>
+          <div class="cuota-card">
+            <div class="cuota-year">2025</div>
+            <div id="badge2025" class="cuota-badge">—</div>
+          </div>
+          <div class="cuota-card" style="border: 2px solid #BFDBFE; background: #EFF6FF;">
+            <div class="cuota-year" style="color: var(--primary-blue);">2026 (Actual)</div>
+            <div id="badge2026" class="cuota-badge">—</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px dashed var(--border-color); display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+          <div>
+            <div class="info-label">Estado de Cuota 2026</div>
+            <div id="resEstadoCuota2026" style="font-size: 0.95rem; font-weight: 700; color: var(--primary-navy); margin-top: 2px;">—</div>
+          </div>
+          <div>
+            <div class="info-label">Movimiento de Pago (Reasignación de Deuda)</div>
+            <div id="resMovimiento" style="font-size: 0.95rem; font-weight: 600; color: #475569; margin-top: 2px;">—</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 1rem; background: #F8FAFC; border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.8rem; color: #64748B;">
+          ℹ️ <strong>Criterio estatutario:</strong> La condición de <em>Socio Activo</em> exige estar al día en los últimos dos períodos fiscales previos (2024 y 2025). Si se abonó la cuota 2026 adeudando períodos anteriores, el pago se aplica automáticamente al período más antiguo pendiente.
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Footer Institucional -->
+  <footer class="site-footer">
+    <div style="font-weight: 700; color: #FFFFFF; margin-bottom: 0.25rem;">SOCIEDAD URUGUAYA DE BIOCIENCIAS</div>
+    <div>Asociación Civil sin fines de lucro • Fundada en 1953 • Montevideo, Uruguay</div>
+    <div class="footer-links">
+      <a href="index.html">Consulta Individual</a>
+      <span>•</span>
+      <a href="seccionales.html">Directorio de Seccionales (Acceso Directivos)</a>
+    </div>
+  </footer>
+
+  <!-- Carga del dataset público (sin nombres) -->
+  <script src="data/socios_publico.js"></script>
+
+  <script>
+    // Normalizador de cédula
+    function cleanCI(ci) {
+      const nums = String(ci).replace(/\D/g, '');
+      return nums.padStart(8, '0');
+    }
+
+    function formatCI(ci8) {
+      if (!ci8 || ci8.length !== 8) return ci8;
+      return `${ci8[0]}.${ci8.substring(1, 4)}.${ci8.substring(4, 7)}-${ci8[7]}`;
+    }
+
+    function renderCuotaBadge(val) {
+      const v = String(val || '').trim().toLowerCase();
+      if (v === 'sí' || v === 'si') {
+        return '<span class="cuota-badge badge-activo">✓ Pagó</span>';
+      } else if (v === 'no') {
+        return '<span class="cuota-badge badge-inactivo">✗ No Pagó</span>';
+      } else if (v.includes('no corresponde')) {
+        return '<span class="cuota-badge badge-gray">No Corresp.</span>';
+      } else {
+        return `<span class="cuota-badge badge-gray">${val || '—'}</span>`;
+      }
+    }
+
+    function buscarSocio(e) {
+      if (e) e.preventDefault();
+      const rawCI = document.getElementById('ciInput').value;
+      const ciClean = cleanCI(rawCI);
+
+      const notFoundCard = document.getElementById('notFoundCard');
+      const resultContainer = document.getElementById('resultContainer');
+
+      if (!rawCI || rawCI.trim().length === 0) {
+        notFoundCard.style.display = 'none';
+        resultContainer.style.display = 'none';
+        return;
+      }
+
+      if (typeof SOCIOS_PUBLICO === 'undefined') {
+        alert('Error: No se pudo cargar el dataset público de socios.');
+        return;
+      }
+
+      const socio = SOCIOS_PUBLICO[ciClean];
+
+      if (!socio) {
+        resultContainer.style.display = 'none';
+        document.getElementById('ciNotFoundTxt').innerText = rawCI;
+        notFoundCard.style.display = 'block';
+        return;
+      }
+
+      // Ocultar mensaje de no encontrado y mostrar resultados
+      notFoundCard.style.display = 'none';
+      resultContainer.style.display = 'block';
+
+      // 1. Identificación y Estado
+      document.getElementById('resCiDisplay').innerText = socio.ci_display || formatCI(ciClean);
+      
+      const badgeEstado = document.getElementById('resBadgeEstado');
+      const estado = String(socio.estado || '').trim();
+
+      if (estado === 'Activo') {
+        badgeEstado.className = 'status-badge-lg badge-activo';
+        badgeEstado.innerHTML = '● Socio Activo';
+      } else if (estado === 'Inactivo') {
+        badgeEstado.className = 'status-badge-lg badge-inactivo';
+        badgeEstado.innerHTML = '● Inactivo';
+      } else if (estado.toLowerCase().includes('pendiente')) {
+        badgeEstado.className = 'status-badge-lg badge-pendiente';
+        badgeEstado.innerHTML = '● Activo - Pendiente de Pago';
+      } else {
+        badgeEstado.className = 'status-badge-lg badge-gray';
+        badgeEstado.innerHTML = `● ${estado || 'Sin dato'}`;
+      }
+
+      // 2. Información Académica
+      document.getElementById('resNivel').innerText = socio.nivel || 'Sin dato';
+      document.getElementById('resAfiliacion').innerText = socio.afiliacion || 'Sin dato';
+      document.getElementById('resIngreso').innerText = socio.ingreso || '2021 o anterior';
+
+      // 3. Seccionales
+      document.getElementById('resSec1Text').innerText = socio.seccionales.sec1 || 'Ninguna';
+      document.getElementById('resSec2Text').innerText = socio.seccionales.sec2 || 'Ninguna';
+      document.getElementById('resSec3Text').innerText = socio.seccionales.sec3 || 'Ninguna';
+
+      // 4. Cuotas
+      document.getElementById('badge2021').innerHTML = renderCuotaBadge(socio.cuotas['2021']);
+      document.getElementById('badge2022').innerHTML = renderCuotaBadge(socio.cuotas['2022']);
+      document.getElementById('badge2023').innerHTML = renderCuotaBadge(socio.cuotas['2023']);
+      document.getElementById('badge2024').innerHTML = renderCuotaBadge(socio.cuotas['2024']);
+      document.getElementById('badge2025').innerHTML = renderCuotaBadge(socio.cuotas['2025']);
+      document.getElementById('badge2026').innerHTML = renderCuotaBadge(socio.cuotas['2026']);
+
+      // 5. Movimiento y Cuota 2026
+      document.getElementById('resEstadoCuota2026').innerText = socio.estadoCuota2026 || 'PENDIENTE DE PAGO 2026';
+      document.getElementById('resMovimiento').innerText = socio.movimiento || 'Sin movimientos';
+
+      // Smooth scroll hacia el resultado
+      resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Permitir búsqueda automática si viene parámetro ?ci= en la URL
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paramCI = urlParams.get('ci');
+      if (paramCI) {
+        document.getElementById('ciInput').value = paramCI;
+        buscarSocio();
+      }
+    });
+  </script>
+
+</body>
+</html>

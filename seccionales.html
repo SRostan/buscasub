@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Directorio de Seccionales Científicas - SUB</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .selector-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .custom-select {
+      width: 100%;
+      padding: 0.85rem 1.25rem;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--primary-navy);
+      background-color: #F8FAFC;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .custom-select:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      background-color: #FFFFFF;
+      box-shadow: 0 0 0 4px rgba(29, 71, 124, 0.15);
+    }
+    .pref-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      display: inline-block;
+      white-space: nowrap;
+    }
+    .pref-principal {
+      background-color: #E0E7FF;
+      color: #3730A3;
+      border: 1px solid #C7D2FE;
+    }
+    .pref-secundaria {
+      background-color: #F1F5F9;
+      color: #475569;
+      border: 1px solid #CBD5E1;
+    }
+    .pref-terciaria {
+      background-color: #FAF5FF;
+      color: #6B21A8;
+      border: 1px solid #E9D5FF;
+    }
+    .kpi-row-secondary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .kpi-subitem {
+      background: #F8FAFC;
+      border-radius: 6px;
+      padding: 0.5rem;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+    .kpi-subitem-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .kpi-subitem-val {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary-navy);
+    }
+    .btn-export {
+      background: #F8FAFC;
+      border: 1px solid var(--border-color);
+      color: var(--primary-navy);
+      padding: 0.55rem 1rem;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: var(--transition);
+    }
+    .btn-export:hover {
+      background: #E2E8F0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Institucional -->
+  <header class="site-header">
+    <div class="header-container">
+      <a href="index.html" class="brand-wrapper">
+        <div class="sub-logo-badge">SUB</div>
+        <div class="brand-text">
+          <h1>SOCIEDAD URUGUAYA DE BIOCIENCIAS</h1>
+          <p>Portal Oficial de Consulta Institucional y Padrón Societario</p>
+        </div>
+      </a>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">🔍 Consulta Individual</a>
+        <a href="seccionales.html" class="nav-link active">🔬 Directorio Seccionales</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Contenido Principal -->
+  <main class="main-content">
+
+    <!-- Selector de Seccional -->
+    <div class="selector-container">
+      <div>
+        <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+          Directorio Interno para Coordinadores y Directiva
+        </span>
+        <h2 style="color: var(--primary-navy); font-size: 1.4rem; margin-top: 2px;">
+          Seleccione una Seccional Científica
+        </h2>
+      </div>
+
+      <select id="seccionalSelect" class="custom-select" onchange="cambiarSeccional()">
+        <option value="SBBM">SBBM - Bioquímica y Biología Molecular</option>
+        <option value="SNU">SNU - Neurociencias</option>
+        <option value="SUG">SUG - Genética</option>
+        <option value="SUMI">SUMI - Microscopía e Imagenología</option>
+        <option value="CODEUy">CODEUy - Ecología</option>
+        <option value="SBF">SBF - Biofísica</option>
+        <option value="LimnoUy">LimnoUy - Limnología</option>
+        <option value="SUBI">SUBI - Bioinformática</option>
+        <option value="SIB/NIB">SIB/NIB - Ingeniería Biomédica</option>
+        <option value="ATGC-U">ATGC-U - Terapia Génica y Celular</option>
+      </select>
+    </div>
+
+    <!-- Panel de KPIs en Tiempo Real -->
+    <section>
+      <div class="kpi-grid">
+
+        <!-- Total Investigadores -->
+        <div class="kpi-card" style="border-top: 4px solid var(--primary-navy);">
+          <span class="kpi-label">👥 Total Investigadores</span>
+          <span id="kpiTotal" class="kpi-value">0</span>
+          <span style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Adscritos en la seccional</span>
+        </div>
+
+        <!-- Socios Activos -->
+        <div class="kpi-card" style="border-top: 4px solid #10B981;">
+          <span class="kpi-label" style="color: #065F46;">✓ Socios Activos</span>
+          <span id="kpiActivos" class="kpi-value" style="color: #065F46;">0</span>
+          <span id="kpiActivosPct" style="font-size: 0.75rem; color: #047857; margin-top: 4px;">0% del total</span>
+        </div>
+
+        <!-- Socios Inactivos -->
+        <div class="kpi-card" style="border-top: 4px solid #EF4444;">
+          <span class="kpi-label" style="color: #991B1B;">✗ Inactivos</span>
+          <span id="kpiInactivos" class="kpi-value" style="color: #991B1B;">0</span>
+          <span id="kpiInactivosPct" style="font-size: 0.75rem; color: #B91C1C; margin-top: 4px;">0% del total</span>
+        </div>
+
+        <!-- Pendientes de Pago -->
+        <div class="kpi-card" style="border-top: 4px solid #F59E0B;">
+          <span class="kpi-label" style="color: #92400E;">⏳ Pendientes Pago</span>
+          <span id="kpiPendientes" class="kpi-value" style="color: #92400E;">0</span>
+          <span style="font-size: 0.75rem; color: #B45309; margin-top: 4px;">Cuota 2024 pendiente</span>
+        </div>
+
+        <!-- Desglose por Nivel Académico -->
+        <div class="kpi-card" style="border-top: 4px solid var(--primary-blue); grid-column: span 1 / -1;">
+          <span class="kpi-label">🎓 Desglose por Nivel Académico</span>
+          <div class="kpi-row-secondary">
+            <div class="kpi-subitem">
+              <div class="kpi-subitem-label">Nivel I</div>
+              <div id="kpiNivelI" class="kpi-subitem-val">0</div>
+            </div>
+            <div class="kpi-subitem">
+              <div class="kpi-subitem-label">Nivel II</div>
+              <div id="kpiNivelII" class="kpi-subitem-val">0</div>
+            </div>
+            <div class="kpi-subitem">
+              <div class="kpi-subitem-label">Nivel III</div>
+              <div id="kpiNivelIII" class="kpi-subitem-val">0</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Tabla del Padrón de la Seccional -->
+    <section class="card" style="padding: 1.5rem;">
+      <div class="table-filter-group">
+        <div>
+          <h3 id="tableTitle" style="color: var(--primary-navy); font-size: 1.15rem; font-weight: 700;">
+            Padrón de Investigadores
+          </h3>
+          <p id="tableCountText" style="font-size: 0.85rem; color: var(--text-muted);">
+            Mostrando 0 registros
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+          <input 
+            type="text" 
+            id="tableFilterInput" 
+            class="table-search-input" 
+            placeholder="🔍 Filtrar por nombre, CI, afiliación o correo..."
+            oninput="filtrarTabla()"
+          >
+          <button class="btn-export" onclick="exportarCSV()">
+            📥 Exportar CSV
+          </button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th style="width: 40px;">N°</th>
+              <th>Nombre Completo</th>
+              <th>Cédula</th>
+              <th>Nivel</th>
+              <th>Afiliación Institucional</th>
+              <th>Correo Electrónico</th>
+              <th>Año Ingreso</th>
+              <th>Preferencia</th>
+              <th>Estado Actividad</th>
+              <th>Movimiento Pago</th>
+              <th>Cuota 2026</th>
+            </tr>
+          </thead>
+          <tbody id="padronTableBody">
+            <!-- Filas inyectadas por JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer Institucional -->
+  <footer class="site-footer">
+    <div style="font-weight: 700; color: #FFFFFF; margin-bottom: 0.25rem;">SOCIEDAD URUGUAYA DE BIOCIENCIAS</div>
+    <div>Asociación Civil sin fines de lucro • Fundada en 1953 • Montevideo, Uruguay</div>
+    <div class="footer-links">
+      <a href="index.html">Consulta Individual de Socios</a>
+      <span>•</span>
+      <a href="seccionales.html">Directorio de Seccionales Científicas</a>
+    </div>
+  </footer>
+
+  <!-- Carga del dataset de seccionales -->
+  <script src="data/seccionales_data.js"></script>
+
+  <script>
+    let currentPadron = [];
+
+    function renderEstadoBadge(estado) {
+      const e = String(estado || '').trim();
+      if (e === 'Activo') {
+        return '<span class="cuota-badge badge-activo">Activo</span>';
+      } else if (e === 'Inactivo') {
+        return '<span class="cuota-badge badge-inactivo">Inactivo</span>';
+      } else if (e.toLowerCase().includes('pendiente')) {
+        return '<span class="cuota-badge badge-pendiente">Pendiente Pago</span>';
+      }
+      return `<span class="cuota-badge badge-gray">${e || '—'}</span>`;
+    }
+
+    function renderPrefBadge(pref) {
+      if (pref === 'Principal') {
+        return '<span class="pref-badge pref-principal">Principal</span>';
+      } else if (pref === 'Secundaria') {
+        return '<span class="pref-badge pref-secundaria">Secundaria</span>';
+      } else if (pref === 'Terciaria') {
+        return '<span class="pref-badge pref-terciaria">Terciaria</span>';
+      }
+      return `<span class="pref-badge">${pref || '—'}</span>`;
+    }
+
+    function cambiarSeccional() {
+      const code = document.getElementById('seccionalSelect').value;
+      if (typeof SECCIONALES_DATA === 'undefined' || !SECCIONALES_DATA[code]) {
+        console.error('No se encontraron datos para la seccional:', code);
+        return;
+      }
+
+      const secData = SECCIONALES_DATA[code];
+      currentPadron = secData.padron || [];
+
+      // Actualizar Título
+      document.getElementById('tableTitle').innerText = `Padrón: ${secData.nombre}`;
+
+      // Calcular KPIs
+      const total = currentPadron.length;
+      let activos = 0;
+      let inactivos = 0;
+      let pendientes = 0;
+      let n1 = 0, n2 = 0, n3 = 0;
+
+      currentPadron.forEach(item => {
+        const est = String(item.estado || '').trim();
+        if (est === 'Activo') activos++;
+        else if (est === 'Inactivo') inactivos++;
+        else if (est.toLowerCase().includes('pendiente')) pendientes++;
+
+        const niv = String(item.nivel || '').trim();
+        if (niv === 'Nivel I') n1++;
+        else if (niv === 'Nivel II') n2++;
+        else if (niv === 'Nivel III') n3++;
+      });
+
+      document.getElementById('kpiTotal').innerText = total;
+      document.getElementById('kpiActivos').innerText = activos;
+      document.getElementById('kpiActivosPct').innerText = total > 0 ? `${Math.round((activos / total) * 100)}% del total` : '0%';
+      document.getElementById('kpiInactivos').innerText = inactivos;
+      document.getElementById('kpiInactivosPct').innerText = total > 0 ? `${Math.round((inactivos / total) * 100)}% del total` : '0%';
+      document.getElementById('kpiPendientes').innerText = pendientes;
+
+      document.getElementById('kpiNivelI').innerText = n1;
+      document.getElementById('kpiNivelII').innerText = n2;
+      document.getElementById('kpiNivelIII').innerText = n3;
+
+      // Limpiar filtro y renderizar tabla
+      document.getElementById('tableFilterInput').value = '';
+      renderTabla(currentPadron);
+    }
+
+    function renderTabla(lista) {
+      const tbody = document.getElementById('padronTableBody');
+      const countText = document.getElementById('tableCountText');
+      countText.innerText = `Mostrando ${lista.length} de ${currentPadron.length} investigadores`;
+
+      if (lista.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="11" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              No se encontraron investigadores que coincidan con la búsqueda.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      lista.forEach((item, index) => {
+        html += `
+          <tr>
+            <td style="font-weight: 700; color: var(--text-muted); text-align: center;">${index + 1}</td>
+            <td style="font-weight: 600; color: var(--primary-navy); white-space: nowrap;">${item.nombre}</td>
+            <td style="font-family: monospace; font-size: 0.85rem;">${item.ci}</td>
+            <td style="white-space: nowrap;">${item.nivel}</td>
+            <td>${item.afiliacion}</td>
+            <td><a href="mailto:${item.correo}" style="color: var(--primary-blue); text-decoration: none;">${item.correo}</a></td>
+            <td style="text-align: center;">${item.ingreso}</td>
+            <td>${renderPrefBadge(item.preferencia)}</td>
+            <td>${renderEstadoBadge(item.estado)}</td>
+            <td style="font-size: 0.8rem; color: #475569;">${item.movimiento || 'Sin movimientos'}</td>
+            <td style="font-size: 0.8rem; font-weight: 600;">${item.cuota2026}</td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
+    }
+
+    function filtrarTabla() {
+      const q = document.getElementById('tableFilterInput').value.toLowerCase().trim();
+      if (!q) {
+        renderTabla(currentPadron);
+        return;
+      }
+
+      const filtrados = currentPadron.filter(item => {
+        return (item.nombre && item.nombre.toLowerCase().includes(q)) ||
+               (item.ci && item.ci.toLowerCase().includes(q)) ||
+               (item.ci_raw && item.ci_raw.includes(q)) ||
+               (item.afiliacion && item.afiliacion.toLowerCase().includes(q)) ||
+               (item.correo && item.correo.toLowerCase().includes(q)) ||
+               (item.nivel && item.nivel.toLowerCase().includes(q)) ||
+               (item.preferencia && item.preferencia.toLowerCase().includes(q));
+      });
+
+      renderTabla(filtrados);
+    }
+
+    function exportarCSV() {
+      const code = document.getElementById('seccionalSelect').value;
+      if (!currentPadron || currentPadron.length === 0) {
+        alert('No hay datos para exportar.');
+        return;
+      }
+
+      const headers = ['N', 'Nombre Completo', 'Cedula', 'Nivel', 'Afiliacion', 'Correo', 'Año Ingreso', 'Preferencia', 'Estado Actividad', 'Movimiento Pago', 'Cuota 2026'];
+      const rows = currentPadron.map((item, idx) => [
+        idx + 1,
+        `"${(item.nombre || '').replace(/"/g, '""')}"`,
+        `"${item.ci}"`,
+        `"${item.nivel}"`,
+        `"${(item.afiliacion || '').replace(/"/g, '""')}"`,
+        `"${item.correo}"`,
+        `"${item.ingreso}"`,
+        `"${item.preferencia}"`,
+        `"${item.estado}"`,
+        `"${(item.movimiento || '').replace(/"/g, '""')}"`,
+        `"${(item.cuota2026 || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `Padron_SUB_${code}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Inicializar al cargar
+    window.addEventListener('DOMContentLoaded', () => {
+      cambiarSeccional();
+    });
+  </script>
+
+</body>
+</html>
